@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="css/primer-core.css">
+    <link rel="stylesheet" href="css/options.css">
+  </head>
+  <body>
+    <div class="Box Box--condensed">
+      <div class="Box-header">
+        <span class="Box-title">
+          Setup your default review
+        </span>
+      </div>
+      <div class="Box-body">
+        <label class="d-block mb-2" for="ta_comment">Review comment</label>
+        <textarea name="ta_comment" id="ta_comment" placeholder="Leave your LGTM comment" aria-label="Comment body" class="form-control input-block" rows="4"></textarea>
+      </div>
+      <div class="Box-footer form-actions clearfix border-top bg-gray-light">
+        <button type="button" id="btn_save" class="btn btn-sm btn-primary" data-disable-with="">Save</button>
+        <button type="button" id="btn_discard" class="btn btn-sm">Discard</button>
+      </div>
+    </div>
+    <script src="options.js"></script>
+  </body>
+</html>
