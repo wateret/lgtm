@@ -3,8 +3,6 @@ function log(msg) {
 }
 
 function lgtm(event) {
-  log("BEGIN");
-
   try {
     // Find review comment textarea and radio
     var textarea = document.getElementById("pull_request_review_body");
@@ -35,11 +33,12 @@ function lgtm(event) {
 
     // Lookup sessionStorage to check if it had been being edited
     let storage_key = "session-resume:" + location.pathname;
-    let editing = !!(sessionStorage.getItem(storage_key) || textarea.value !== "");
+    let storage_value = sessionStorage.getItem(storage_key);
+    let editing = !!((storage_value && storage_value !== data.lgtm_comment) || textarea.value !== "");
 
-    log("storage value '" + storage_key + "' : " + sessionStorage.getItem(storage_key));
-    log("textarea.value : '" + textarea.value + "'");
-    log("editing : " + editing);
+    //log("storage value '" + storage_key + "' : " + sessionStorage.getItem(storage_key));
+    //log("textarea.value : '" + textarea.value + "'");
+    //log("editing : " + editing);
 
     // Set default review comment and set approve radio button
     if (!editing) {

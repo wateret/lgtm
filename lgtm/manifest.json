@@ -1,7 +1,7 @@
 {
   "name": "LGTM",
   "description": "Set your default PR review on github",
-  "version": "0.1",
+  "version": "0.2",
   "permissions": ["activeTab", "storage"],
   "background": {
     "scripts": ["background.js"],
