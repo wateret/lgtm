@@ -87,8 +87,86 @@ function lgtm(event) {
       lgtm_button.setAttribute('disabled', '');
     }
     log(e);
-    return;
   }
+
+  try {
+    // Find containers
+    let reviewers_container = document.getElementsByClassName("js-issue-sidebar-form")[0];
+    if (!reviewers_container) {
+      throw "Cannot find `js-issue-sidebar-form`.";
+    }
+    if (reviewers_container.getAttribute("aria-label") != "Select reviewers") {
+      throw "Not PR page";
+    }
+    let reviewers_details = reviewers_container.getElementsByTagName("details")[0];
+    if (!reviewers_details) {
+      throw "Cannot find `reviewers_details`.";
+    }
+
+    console.log(reviewers_details.getAttribute('open'));
+
+    let dr_button = document.getElementById("dr_button");
+    if (!dr_button) {
+      // Insert button
+      reviewers_container.insertAdjacentHTML(
+          "afterbegin",
+            '<button id="dr_button" class="btn btn-block btn-sm btn-primary" type="button">Assign Default Reviewers</button>'
+          );
+      log("DR button inserted");
+      dr_button = document.getElementById("dr_button");
+    }
+
+    // Add event listener
+    dr_button.addEventListener("click", function () {
+          log('CHROME STORAGE : ' + chrome.storage);
+          chrome.storage.sync.get("reviewers", function (data) {
+            let reviewers_text = data.reviewers;
+            if (typeof reviewers_text !== "string") {
+              reviewers_text = "";
+            }
+            
+            // Click and open Reviewers button
+            reviewers_details.setAttribute('open', '');
+
+            let reviewers_box = reviewers_details.getElementsByClassName("select-menu-modal position-absolute right-0 hx_rsm-modal js-discussion-sidebar-menu")[0];
+            if (!reviewers_box) {
+              throw "Cannot find `reviewers_box`.";
+            }
+
+            // After click, few miliseconds is needed to be fully loaded.
+            // When loading is finished, actual logic will be executed.
+            // 1500ms is given for waiting full loading.
+            let trial = 0;
+            (function wait() {
+              log("Reviewers loading : " + trial + " trial");
+              if ( reviewers_box.getElementsByClassName("select-menu-item text-normal").length != 0 ) {
+                  // Now loading is finished. Let's enable default reviewers.
+                  let reviewers = reviewers_box.getElementsByClassName("select-menu-item text-normal");
+                  for(var i=0;i<reviewers.length;++i)
+                  {
+                    let username = reviewers[i].getElementsByClassName("js-username")[0].innerHTML;
+                    if(reviewers_text.includes(username))
+                      reviewers[i].setAttribute("aria-checked",true);
+                  }
+              } else if (trial < 15) {
+                // If not loaded yet, retry after 100ms.
+                setTimeout( wait, 100 );
+                ++trial;
+              }
+          })();
+            
+          });
+
+        }, false);
+  } catch (e) {
+    let dr_button = document.getElementById("dr_button");
+    if (dr_button) {
+      dr_button.setAttribute('disabled', '');
+    }
+    log(e);
+  }
+
+  return;
 }
 
 if (["complete", "interactive"].includes(document.readyState)) {
